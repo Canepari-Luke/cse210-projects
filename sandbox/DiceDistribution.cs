@@ -1,7 +1,6 @@
 namespace DiceDistribution;
 
 class Program
-{
     static voice Main(string[] args)
     {
         // initialize a list that will hold the dice roll tallies
@@ -36,4 +35,3 @@ class Program
         }
         
     }
-}
