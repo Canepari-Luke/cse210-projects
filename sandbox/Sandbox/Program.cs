@@ -1,17 +1,20 @@
-// for (int y = 9; y > 3; y--)
-// {
-//     Console.WriteLine("Howdy Sandbox World!");
-// }
+using System;
 
-namespace Sandbox;
+namespace Sandbox
+{
     class Program
     {
         static void Main(string[] args)
         {
-            for (int x=0; x>9; x++)
-            {
-                Console.WriteLine("Howdy Sandbox World!");
-            }
+            Course course1 = new Course();
+            course1._courseCode = "CSE210";
+            course1._courseName = "Programming with Classes";
+            course1._creditHours = 2; // Corrected property name
+            course1._color = "green";
+            course1.Display();
+
+            Console.WriteLine("Howdy Sandbox World!"); // Moved outside the block
         }
     }
-    //This is in class practice.
+}
+//Changed it for in class practice
