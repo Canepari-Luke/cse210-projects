@@ -50,21 +50,24 @@ class Journal
     {
         Console.WriteLine("Please enter filename: ");
         string filename = Console.ReadLine();
+        string filePath = $"{filename}.csv";
 
         using (StreamWriter writer = new StreamWriter(filename))
         {
+            writer.WriteLine("Date,Prompt,Response");
             foreach (var entry in entries)
             {
-                writer.WriteLine($"{entry.Date} | {entry.Prompt} | {entry.Response}");
+                writer.WriteLine($"{EscapeCsv(entry.Date)},{EscapeCsv(entry.Prompt)},{EscapeCsv(entry.Response)}");
             }
         }
-        Console.WriteLine("Journal saved to file.");
+        Console.WriteLine("Journal saved to {filePath}");
     }
 
     public void LoadFromFile()
     {
         Console.Write("Please enter filename: ");
         string filename = Console.ReadLine();
+        string filePath = $"{filename}.csv";
 
         if (File.Exists(filename))
         {
@@ -91,6 +94,69 @@ class Journal
         {
             Console.WriteLine("File not found.");
         }
+    }
+
+//Method to escape CSV field
+    public string EscapeCsv(string field)
+    {
+        if (field.Contains(",") || field.Contains("\""))
+        {
+            field = field.Replace("\"", "\"\"");
+            field = $"\"{field}\"";
+        }
+        return field;
+    }
+
+//Method to parse CSV line
+    public string[] ParseCsvLine(string line)
+    {
+        var fields = new List<string>();
+        var field = new System.Text.StringBuilder();
+        bool inQuotes = false;
+
+        for (int i = 0; i < line.Length; i++)
+        {
+            char current = line[i];
+            if (inQuotes)
+            {
+                // Look ahead to see if the next character is also a quote (escape quote)
+                if (current == '"')
+                {
+                    if (i + 1 < line.Length && line[i + 1] == '"')
+                    {
+                        field.Append('"'); // Add a single quote to the field
+                        i++; // Skip the next quote character by incrementing the index
+                    }
+                    else
+                    {
+                        inQuotes = false; // End of quoted section
+                    }
+                }
+                else
+                {
+                    field.Append(current); // Add the current character to the field
+                }
+            }
+            else
+            {
+                if (current == '"')
+                {
+                    inQuotes = true; // Start of quoted section
+                }
+                else if (current == ',')
+                {
+                    fields.Add(field.ToString()); // Add the completed field to the list
+                    field.Clear(); // Clear the field builder for the next field
+                }
+                else
+                {
+                    field.Append(current); // Add the current character to the field
+                }
+            }
+        }
+        fields.Add(field.ToString()); // Add the last field to the list
+
+        return fields.ToArray(); // Return the list of fields as an array
     }
     
 }
