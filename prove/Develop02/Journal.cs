@@ -12,29 +12,31 @@ class Journal
         "What did you regret the most?",
         "What is something you wish you could have done differently, What would you change?",
         "What is something you're proud of? Something you accomplished or achieved?",
-        "did you accomplish or progress a goal today?",
-        "did you fall short of a goal today?",
-        "What's a goal that you set or will continue for tommorrow?",
+        "Did you accomplish or progress a goal today?",
+        "Did you fall short of a goal today?",
+        "What's a goal that you set or will continue for tomorrow?",
         "What's something you're grateful for?",
         "Who is someone you're most grateful for? What did they do that you respect or appreciate?",
         "How has the Lord helped you today?",
         "What have you done for the Lord today?",
         "What have you learned from the Lord today?",
         "What are you grateful for in the Lord?",
-        "Did you take on any responsibilties today?",
-        "Will you take on any new responsibilties tomorrow?",
+        "Did you take on any responsibilities today?",
+        "Will you take on any new responsibilities tomorrow?"
     };
+
+    public const string DefaultFilename = "JournalEntries.txt";
 
     public void AddEntry()
     {
         Random random = new Random();
-        int PromptIndex = random.Next(prompts.Count);
-        string Prompt = prompts[PromptIndex];
+        int promptIndex = random.Next(prompts.Count);
+        string prompt = prompts[promptIndex];
 
-        Console.WriteLine(Prompt);
+        Console.WriteLine(prompt);
         string response = Console.ReadLine();
 
-        JournalEntry entry = new JournalEntry(Prompt, response);
+        JournalEntry entry = new JournalEntry(prompt, response);
         entries.Add(entry);
     }
 
@@ -47,37 +49,49 @@ class Journal
     }
 
     public void SaveToFile()
+{
+    Console.WriteLine("Please enter filename (default is 'JournalEntries.txt'): ");
+    string filename = Console.ReadLine();
+    if (string.IsNullOrWhiteSpace(filename))
     {
-        Console.WriteLine("Please enter filename: ");
-        string filename = Console.ReadLine();
-        string filePath = $"{filename}.csv";
-
-        using (StreamWriter writer = new StreamWriter(filename))
-        {
-            writer.WriteLine("Date,Prompt,Response");
-            foreach (var entry in entries)
-            {
-                writer.WriteLine($"{EscapeCsv(entry.Date)},{EscapeCsv(entry.Prompt)},{EscapeCsv(entry.Response)}");
-            }
-        }
-        Console.WriteLine("Journal saved to {filePath}");
+        filename = DefaultFilename;
     }
+
+    // Debugging output
+    Console.WriteLine($"Saving journal to file: {filename}");
+
+    using (StreamWriter writer = new StreamWriter(filename))
+    {
+        writer.WriteLine("Date|Prompt|Response"); // TXT header
+        foreach (var entry in entries)
+        {
+            writer.WriteLine($"{EscapeTxt(entry.Date)}|{EscapeTxt(entry.Prompt)}|{EscapeTxt(entry.Response)}");
+        }
+    }
+
+    // Debugging output
+    Console.WriteLine($"Journal saved to {filename}.");
+}
+
 
     public void LoadFromFile()
     {
-        Console.Write("Please enter filename: ");
+        Console.WriteLine("Please enter filename (default is 'JournalEntries.txt'): ");
         string filename = Console.ReadLine();
-        string filePath = $"{filename}.csv";
+        if (string.IsNullOrWhiteSpace(filename))
+        {
+            filename = DefaultFilename;
+        }
 
         if (File.Exists(filename))
         {
             entries.Clear();
             using (StreamReader reader = new StreamReader(filename))
             {
-                string line;
+                string line = reader.ReadLine(); // Skip the header line
                 while ((line = reader.ReadLine()) != null)
                 {
-                    var parts = line.Split("|");
+                    var parts = ParseTxtLine(line);
                     if (parts.Length == 3)
                     {
                         JournalEntry entry = new JournalEntry(parts[1], parts[2])
@@ -96,10 +110,10 @@ class Journal
         }
     }
 
-//Method to escape CSV field
-    public string EscapeCsv(string field)
+    // Method to escape TXT field
+    public string EscapeTxt(string field)
     {
-        if (field.Contains(",") || field.Contains("\""))
+        if (field.Contains("|") || field.Contains("\""))
         {
             field = field.Replace("\"", "\"\"");
             field = $"\"{field}\"";
@@ -107,8 +121,8 @@ class Journal
         return field;
     }
 
-//Method to parse CSV line
-    public string[] ParseCsvLine(string line)
+    // Method to parse TXT line
+    public string[] ParseTxtLine(string line)
     {
         var fields = new List<string>();
         var field = new System.Text.StringBuilder();
@@ -143,7 +157,7 @@ class Journal
                 {
                     inQuotes = true; // Start of quoted section
                 }
-                else if (current == ',')
+                else if (current == '|')
                 {
                     fields.Add(field.ToString()); // Add the completed field to the list
                     field.Clear(); // Clear the field builder for the next field
@@ -158,6 +172,4 @@ class Journal
 
         return fields.ToArray(); // Return the list of fields as an array
     }
-    
 }
-
