@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 class ListingActivity : Activity
@@ -21,18 +20,23 @@ class ListingActivity : Activity
         base.Start();
         Random rand = new Random();
         Console.Clear();
-        Console.WriteLine(prompts[rand.Next(prompts.Length)]);
+        Program.TypeOut(prompts[rand.Next(prompts.Length)]);
+        Console.WriteLine();  // New line for formatting
+        Program.TypeOut("You have a few seconds to start listing...");
         Thread.Sleep(5000);
 
-        List<string> items = new List<string>();
         DateTime endTime = DateTime.Now.AddSeconds(_duration);
+        int count = 0;
         while (DateTime.Now < endTime)
         {
-            Console.Write("List an item: ");
-            items.Add(Console.ReadLine());
+            Program.TypeOut("Enter an item: ");
+            Console.ReadLine();
+            count++;
         }
 
-        Console.WriteLine($"You listed {items.Count} items.");
+        Console.Clear();
+        Program.TypeOut($"You listed {count} items.");
+        Thread.Sleep(3000);
         base.End();
     }
 }
