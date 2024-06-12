@@ -14,41 +14,38 @@ class Activity
         _duration = duration;
     }
 
-    protected void DisplayMessage(string message)
+    public virtual void Start()
     {
         Console.Clear();
-        Program.TypeOut(message);
+        Program.TypeOut($"Starting {_title}");
         Console.WriteLine();  // New line for formatting
+        Program.TypeOut(_description);
+        Console.WriteLine();  // New line for formatting
+        Program.TypeOut($"This activity will last for {_duration} seconds.");
+        Console.WriteLine();  // New line for formatting
+        Thread.Sleep(3000);  // Pause before starting
+    }
+
+    public virtual void End()
+    {
+        Console.Clear();
+        Program.TypeOut("Good job! You have completed the activity.");
+        Console.WriteLine();  // New line for formatting
+        Program.TypeOut($"You completed {_title} for {_duration} seconds.");
+        Thread.Sleep(3000);  // Pause before ending
     }
 
     protected void DisplayAnimation()
     {
-        for (int i = 0; i < 5; i++)
+        string[] spinner = { "/", "-", "\\", "|" };
+        for (int i = 0; i < 10; i++)
         {
-            Console.Write(".");
-            Thread.Sleep(500);
+            foreach (string s in spinner)
+            {
+                Console.Write(s);
+                Thread.Sleep(100);
+                Console.Write("\b \b");  // Erase the character
+            }
         }
-        Console.WriteLine();
-    }
-
-    public virtual void Start()
-    {
-        DisplayMessage($"Starting {_title}. {_description}");
-        Program.TypeOut($"The activity will last for {_duration} seconds. Prepare to begin...");
-        Console.WriteLine();  // New line for formatting
-        DisplayAnimation();
-        Program.TypeOut("Starting now...");
-        Console.WriteLine();  // New line for formatting
-        Thread.Sleep(2000);
-        End();
-    }
-
-    protected void End()
-    {
-        DisplayMessage($"Well done! You have completed the {_title} for {_duration} seconds.");
-        DisplayAnimation();
-        Program.TypeOut("Activity completed.");
-        Console.WriteLine();  // New line for formatting
-        Thread.Sleep(2000);
     }
 }

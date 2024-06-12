@@ -20,10 +20,26 @@ class Program
             TypeOut("Choose an activity (1-4): ");
             string choice = Console.ReadLine();
 
-            if (choice == "4") break;
+            if (choice == "4")
+            {
+                TypeOut("Good luck with your future endeavors...");
+                Thread.Sleep(2000);
+                break;
+            }
+
+            if (choice != "1" && choice != "2" && choice != "3")
+            {
+                TypeOut("Invalid choice. Please select a valid option.");
+                Thread.Sleep(2000);
+                continue;
+            }
 
             TypeOut("Enter duration of the activity in seconds: ");
-            int duration = int.Parse(Console.ReadLine());
+            int duration;
+            while (!int.TryParse(Console.ReadLine(), out duration) || duration <= 0)
+            {
+                TypeOut("Please enter a valid duration in seconds: ");
+            }
 
             switch (choice)
             {
@@ -38,10 +54,6 @@ class Program
                 case "3":
                     var listingActivity = new ListingActivity("Listing Activity", "This activity will help you reflect on the good things in your life by having you list as many things as you can in a certain area.", duration);
                     listingActivity.Start();
-                    break;
-                default:
-                    TypeOut("Invalid choice. Please select a valid option.");
-                    Thread.Sleep(2000);
                     break;
             }
         }

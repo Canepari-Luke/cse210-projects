@@ -63,6 +63,6 @@ class ReflectionActivity : Activity
             Console.WriteLine();  // New line for formatting
             DisplayAnimation();
         }
-        base.End();
+        base.End();  // End message displayed after activity is complete
     }
 }
