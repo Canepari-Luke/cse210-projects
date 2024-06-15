@@ -10,13 +10,13 @@ class Program
             TypeOut("Mindfulness Program");
             Console.WriteLine();  // New line for formatting
             TypeOut("1. Breathing Activity");
-            Console.WriteLine();  // New line for formatting
+            Console.WriteLine(); 
             TypeOut("2. Reflection Activity");
-            Console.WriteLine();  // New line for formatting
+            Console.WriteLine(); 
             TypeOut("3. Listing Activity");
-            Console.WriteLine();  // New line for formatting
+            Console.WriteLine(); 
             TypeOut("4. Exit");
-            Console.WriteLine();  // New line for formatting
+            Console.WriteLine();
             TypeOut("Choose an activity (1-4): ");
             string choice = Console.ReadLine();
 
