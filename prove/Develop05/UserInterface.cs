@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class UserInterface
 {
@@ -16,6 +17,9 @@ public static class UserInterface
     {
         while (true)
         {
+            CalculateTotalScore();
+            Console.WriteLine($"\nTotal Score: {totalScore}");
+
             Console.WriteLine("\nMenu:");
             Console.WriteLine("1. Create a new goal");
             Console.WriteLine("2. Record an event");
@@ -51,24 +55,24 @@ public static class UserInterface
         totalScore = 0;
         foreach (var goal in Program.goals)
         {
-            if (goal is SimpleGoal simpleGoal)
+            switch (goal)
             {
-                if (simpleGoal.IsCompleted)
-                {
-                    totalScore += simpleGoal.Points;
-                }
-            }
-            else if (goal is EternalGoal eternalGoal)
-            {
-                totalScore += eternalGoal.Points * eternalGoal.Count;
-            }
-            else if (goal is ChecklistGoal checklistGoal)
-            {
-                totalScore += checklistGoal.Points * checklistGoal.CurrentCount;
-                if (checklistGoal.IsCompleted)
-                {
-                    totalScore += checklistGoal.BonusPoints;
-                }
+                case SimpleGoal simpleGoal:
+                    if (simpleGoal.IsCompleted)
+                    {
+                        totalScore += simpleGoal.Points;
+                    }
+                    break;
+                case EternalGoal eternalGoal:
+                    totalScore += eternalGoal.Points * eternalGoal.Count;
+                    break;
+                case ChecklistGoal checklistGoal:
+                    totalScore += checklistGoal.Points * checklistGoal.CurrentCount;
+                    if (checklistGoal.IsCompleted)
+                    {
+                        totalScore += checklistGoal.BonusPoints;
+                    }
+                    break;
             }
         }
     }
@@ -117,6 +121,7 @@ public static class UserInterface
         }
 
         Program.goals.Add(newGoal);
+        Console.WriteLine($"New {newGoal.GetType().Name} '{newGoal.Name}' created successfully.");
     }
 
     public static void RecordEvent()
@@ -159,25 +164,25 @@ public static class UserInterface
             Console.WriteLine($"{i + 1}. {selectedGoals[i].Name}");
         }
 
-        Console.Write("\nSelect an option: ");
-        input = Console.ReadLine();
-        int goalIndex;
-        if (int.TryParse(input, out goalIndex) && goalIndex > 0 && goalIndex <= selectedGoals.Count)
+        Console.Write("\nSelect a goal: ");
+        int goalIndex = int.Parse(Console.ReadLine()) - 1;
+
+        if (goalIndex >= 0 && goalIndex < selectedGoals.Count)
         {
-            selectedGoals[goalIndex - 1].RecordEvent();
+            selectedGoals[goalIndex].RecordEvent();
         }
         else
         {
-            Console.WriteLine("Invalid option.");
+            Console.WriteLine("Invalid goal selection.");
         }
     }
 
     public static void ViewGoalsMenu()
     {
-        Console.WriteLine("\nView Goals Menu:");
-        Console.WriteLine("1. View Simple Goals");
-        Console.WriteLine("2. View Eternal Goals");
-        Console.WriteLine("3. View Checklist Goals");
+        Console.WriteLine("\nSelect Goal Type to View:");
+        Console.WriteLine("1. Simple Goals");
+        Console.WriteLine("2. Eternal Goals");
+        Console.WriteLine("3. Checklist Goals");
 
         Console.Write("\nSelect an option: ");
         string input = Console.ReadLine();
@@ -209,11 +214,15 @@ public static class UserInterface
         Console.WriteLine("\nCurrent Goals:");
         foreach (var goal in selectedGoals)
         {
-            Console.WriteLine($"- {goal.Name} ({goal.Points} points)");
+            string status = goal is SimpleGoal simpleGoal && simpleGoal.IsCompleted ? "[X]" : "[ ]";
+            string progress = "";
+
             if (goal is ChecklistGoal checklistGoal)
             {
-                Console.WriteLine($"  Progress: {checklistGoal.CurrentCount}/{checklistGoal.TargetCount}");
+                progress = $" (Completed {checklistGoal.CurrentCount}/{checklistGoal.TargetCount} times)";
             }
+
+            Console.WriteLine($"{status} {goal.Name}{progress}");
         }
     }
 }
