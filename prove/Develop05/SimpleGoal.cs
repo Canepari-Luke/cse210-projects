@@ -1,39 +1,27 @@
-using System;
-
-namespace EternalQuestProgram
+public class SimpleGoal : Goal
 {
-    // Derived class for simple one-time goals
-    public class SimpleGoal : Goal
+    public bool IsCompleted { get; set; }
+
+    public override string Serialize()
     {
-        public override void RecordEvent()
-        {
-            if (!IsCompleted)
-            {
-                IsCompleted = true;
-                Console.WriteLine($"Goal '{Name}' completed! You earned {Points} points.");
-            }
-            else
-            {
-                Console.WriteLine($"Goal '{Name}' is already completed.");
-            }
-        }
+        return $"SimpleGoal:{Name},{Points},{IsCompleted}";
+    }
 
-        public override string GetProgress()
-        {
-            return IsCompleted ? "[X]" : "[ ]";
-        }
+    public override void Deserialize(string data)
+    {
+        var parts = data.Split(',');
+        Name = parts[0];
+        Points = int.Parse(parts[1]);
+        IsCompleted = bool.Parse(parts[2]);
+    }
 
-        public override string Serialize()
-        {
-            return $"SimpleGoal:{Name},{Points},{IsCompleted}";
-        }
+    public override void RecordEvent()
+    {
+        IsCompleted = true;
+    }
 
-        public override void Deserialize(string data)
-        {
-            var parts = data.Split(',');
-            Name = parts[0];
-            Points = int.Parse(parts[1]);
-            IsCompleted = bool.Parse(parts[2]);
-        }
+    public override bool IsComplete()
+    {
+        return IsCompleted;
     }
 }

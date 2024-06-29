@@ -1,34 +1,27 @@
-using System;
-
-namespace EternalQuestProgram
+public class EternalGoal : Goal
 {
-    // Derived class for goals that can be repeated indefinitely
-    public class EternalGoal : Goal
+    public int Count { get; set; }
+
+    public override string Serialize()
     {
-        public int Count { get; set; } // Count of how many times the goal has been recorded
+        return $"EternalGoal:{Name},{Points},{Count}";
+    }
 
-        public override void RecordEvent()
-        {
-            Count++;
-            Console.WriteLine($"Recorded '{Name}'! You earned {Points} points. Total count: {Count}.");
-        }
+    public override void Deserialize(string data)
+    {
+        var parts = data.Split(',');
+        Name = parts[0];
+        Points = int.Parse(parts[1]);
+        Count = int.Parse(parts[2]);
+    }
 
-        public override string GetProgress()
-        {
-            return $"[∞] Count: {Count}";
-        }
+    public override void RecordEvent()
+    {
+        Count++;
+    }
 
-        public override string Serialize()
-        {
-            return $"EternalGoal:{Name},{Points},{Count}";
-        }
-
-        public override void Deserialize(string data)
-        {
-            var parts = data.Split(',');
-            Name = parts[0];
-            Points = int.Parse(parts[1]);
-            Count = int.Parse(parts[2]);
-        }
+    public override bool IsComplete()
+    {
+        return false; // Eternal goals are never "complete"
     }
 }
