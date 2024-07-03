@@ -1,3 +1,4 @@
+// Program.cs
 using System;
 
 namespace SolarSystemSimulator
@@ -15,7 +16,8 @@ namespace SolarSystemSimulator
                 Console.WriteLine("1: New Solar System");
                 Console.WriteLine("2: Load Solar System");
                 Console.WriteLine("3: Training");
-                Console.WriteLine("4: Quit");
+                Console.WriteLine("4: Revert Last Change");
+                Console.WriteLine("5: Quit");
                 Console.Write("Choose an option: ");
 
                 string choice = Console.ReadLine();
@@ -31,6 +33,9 @@ namespace SolarSystemSimulator
                         solarSystem = TrainingMode();
                         break;
                     case "4":
+                        solarSystem.RevertState();
+                        break;
+                    case "5":
                         return;
                     default:
                         Console.WriteLine("Invalid option. Please try again.");
@@ -39,12 +44,16 @@ namespace SolarSystemSimulator
 
                 if (solarSystem != null)
                 {
-                    Console.WriteLine("Simulating solar system...");
-                    // Simulate the solar system for a given duration
+                    NotificationSystem.Notify("Starting simulation of solar system...");
                     for (int i = 0; i < 1000; i++)
                     {
                         physicsEngine.Simulate(solarSystem, 1.0);
+                        if (i % 100 == 0)
+                        {
+                            solarSystem.PrintState();
+                        }
                     }
+                    NotificationSystem.Notify("Simulation complete.");
                 }
             }
         }
@@ -52,7 +61,7 @@ namespace SolarSystemSimulator
         private static SolarSystem CreateNewSolarSystem()
         {
             SolarSystem solarSystem = new SolarSystem();
-            Console.WriteLine("Creating a new solar system...");
+            NotificationSystem.Notify("Creating a new solar system...");
             // Add code to create new celestial bodies and add them to the solar system
             return solarSystem;
         }
@@ -80,8 +89,28 @@ namespace SolarSystemSimulator
         private static SolarSystem TrainingMode()
         {
             SolarSystem solarSystem = new SolarSystem();
-            Console.WriteLine("Training mode: Creating the Sol system...");
-            // Add code to create the Sol system (Earth's real-life solar system)
+            NotificationSystem.Notify("Training mode: Creating the Sol system...");
+
+            // Step 1: Add the Sun
+            solarSystem.AddBody(TrainingData.Sun);
+            NotificationSystem.Notify("Step 1: Added the Sun");
+
+            // Step 2: Add Planets
+            for (int i = 0; i < TrainingData.Planets.Length; i++)
+            {
+                Planet planet = TrainingData.Planets[i];
+                solarSystem.AddBody(planet);
+                NotificationSystem.Notify($"Step {i + 2}: Added planet {i + 1} with mass {planet.Mass} kg, position {planet.Position.X}m, {planet.Position.Y}m, {planet.Position.Z}m and velocity {planet.Velocity.X}m/s, {planet.Velocity.Y}m/s, {planet.Velocity.Z}m/s");
+            }
+
+            // Additional steps for moons and other details can be added here
+            Moon moon = new Moon(7.35e22, new Vector3D(1.496e11 + 3.84e8, 0, 0), new Vector3D(0, 2.98e4 + 1.02e3, 0)) { Radius = 1737.4 };
+            solarSystem.AddBody(moon);
+            NotificationSystem.Notify("Added the Moon");
+
+            NotificationSystem.Notify("Training complete. Review the system state below:");
+            solarSystem.PrintState();
+
             return solarSystem;
         }
     }

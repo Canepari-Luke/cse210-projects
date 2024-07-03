@@ -1,5 +1,3 @@
-using System;
-
 namespace SolarSystemSimulator
 {
     public class PhysicsEngine
@@ -17,7 +15,7 @@ namespace SolarSystemSimulator
                         totalForce += CalculateGravitationalForce(body, otherBody);
                     }
                 }
-                Vector3D acceleration = totalForce * (1 / body.Mass);
+                Vector3D acceleration = totalForce / body.Mass; // Fixed division issue
                 body.Velocity += acceleration * timeStep;
             }
 

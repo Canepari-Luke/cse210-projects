@@ -1,3 +1,5 @@
+using System;
+
 namespace SolarSystemSimulator
 {
     public class Vector3D
@@ -13,30 +15,41 @@ namespace SolarSystemSimulator
             Z = z;
         }
 
-        public static Vector3D operator +(Vector3D v1, Vector3D v2)
-        {
-            return new Vector3D(v1.X + v2.X, v1.Y + v2.Y, v1.Z + v2.Z);
-        }
-
-        public static Vector3D operator -(Vector3D v1, Vector3D v2)
-        {
-            return new Vector3D(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
-        }
-
-        public static Vector3D operator *(Vector3D v, double scalar)
-        {
-            return new Vector3D(v.X * scalar, v.Y * scalar, v.Z * scalar);
-        }
-
         public double Magnitude()
         {
-            return Math.Sqrt(X * X + Y * Y + Z * Z);
+            return Math.Sqrt(X * X + Y * Y + Z * Z); // Fixed syntax error
         }
 
         public Vector3D Normalize()
         {
             double magnitude = Magnitude();
             return new Vector3D(X / magnitude, Y / magnitude, Z / magnitude);
+        }
+
+        public static Vector3D operator +(Vector3D a, Vector3D b)
+        {
+            return new Vector3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+        }
+
+        public static Vector3D operator -(Vector3D a, Vector3D b)
+        {
+            return new Vector3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public static Vector3D operator *(Vector3D a, double b)
+        {
+            return new Vector3D(a.X * b, a.Y * b, a.Z * b);
+        }
+
+        public static Vector3D operator *(double a, Vector3D b)
+        {
+            return new Vector3D(a * b.X, a * b.Y, a * b.Z);
+        }
+
+        // Overloading the division operator
+        public static Vector3D operator /(Vector3D a, double b)
+        {
+            return new Vector3D(a.X / b, a.Y / b, a.Z / b);
         }
     }
 }
