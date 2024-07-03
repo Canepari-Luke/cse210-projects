@@ -1,27 +1,51 @@
-public class SaveLoadManager
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
+namespace SolarSystemSimulator
 {
-    private const string saveFilePath = "saves/solar_system_save.xml"; // Example save file path
-
-    public void SaveSystem(SolarSystem system, string name)
+    public class SaveLoadManager
     {
-        // Save the solar system to a file
-        // Example implementation
-        // ...
-    }
+        private const string SaveDirectory = "saves";
 
-    public SolarSystem LoadSystem(string name)
-    {
-        // Load a solar system from a file
-        // Example implementation
-        // ...
-        return null;
-    }
+        public SaveLoadManager()
+        {
+            if (!Directory.Exists(SaveDirectory))
+            {
+                Directory.CreateDirectory(SaveDirectory);
+            }
+        }
 
-    public List<string> GetSavedSystems()
-    {
-        // Retrieve a list of saved solar system names
-        // Example implementation
-        // ...
-        return new List<string>();
+        public void SaveSystem(SolarSystem system, string name)
+        {
+            string filePath = Path.Combine(SaveDirectory, $"{name}.xml");
+            XmlSerializer serializer = new XmlSerializer(typeof(SolarSystem));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, system);
+            }
+        }
+
+        public SolarSystem LoadSystem(string name)
+        {
+            string filePath = Path.Combine(SaveDirectory, $"{name}.xml");
+            XmlSerializer serializer = new XmlSerializer(typeof(SolarSystem));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                return (SolarSystem)serializer.Deserialize(reader);
+            }
+        }
+
+        public string[] GetSavedSystems()
+        {
+            string[] files = Directory.GetFiles(SaveDirectory, "*.xml");
+            List<string> systemNames = new List<string>();
+            foreach (string file in files)
+            {
+                systemNames.Add(Path.GetFileNameWithoutExtension(file));
+            }
+            return systemNames.ToArray();
+        }
     }
 }

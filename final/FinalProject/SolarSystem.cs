@@ -1,35 +1,32 @@
-public class SolarSystem
+using System.Collections.Generic;
+
+namespace SolarSystemSimulator
 {
-    public List<Star> Stars { get; private set; }
-    public List<Planet> Planets { get; private set; }
-    public List<Moon> Moons { get; private set; }
-
-    public SolarSystem()
+    public class SolarSystem
     {
-        Stars = new List<Star>();
-        Planets = new List<Planet>();
-        Moons = new List<Moon>();
-    }
+        public List<CelestialBody> Bodies { get; set; } = new List<CelestialBody>();
 
-    public void AddStar(Star star)
-    {
-        Stars.Add(star);
-    }
+        public void AddBody(CelestialBody body)
+        {
+            Bodies.Add(body);
+        }
 
-    public void AddPlanet(Planet planet)
-    {
-        Planets.Add(planet);
-    }
+        public void RemoveBody(CelestialBody body)
+        {
+            Bodies.Remove(body);
+        }
 
-    public void AddMoon(Moon moon)
-    {
-        Moons.Add(moon);
-    }
+        public void Simulate(double timeStep)
+        {
+            foreach (var body in Bodies)
+            {
+                body.UpdatePosition(timeStep);
+            }
+        }
 
-    public void Clear()
-    {
-        Stars.Clear();
-        Planets.Clear();
-        Moons.Clear();
+        public List<CelestialBody> GetAllBodies()
+        {
+            return Bodies;
+        }
     }
 }
