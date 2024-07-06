@@ -1,16 +1,16 @@
 using System;
 
-public class PongGame : Game
+public class SnakeGame : Game
 {
-    public PongGame(GameManager manager, string playerName) : base(manager, playerName)
+    public SnakeGame(GameManager manager, string playerName) : base(manager, playerName)
     {
     }
 
     public override void Start()
     {
-        // Simplified game logic for Pong
+        // Simplified game logic for Snake
         Console.Clear();
-        Console.WriteLine("Playing Pong...");
+        Console.WriteLine("Playing Snake...");
         // Implement game logic here
 
         // Simulate a score for demo purposes
@@ -18,6 +18,6 @@ public class PongGame : Game
         int score = random.Next(0, 100);
         Console.WriteLine($"Game over! Your score: {score}");
 
-        gameManager.AddScore("Pong", playerName, score);
+        gameManager.AddScore("Snake", playerName, score);
     }
 }

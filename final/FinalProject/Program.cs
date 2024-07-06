@@ -7,10 +7,10 @@ public class Program
         // Initialize the GameManager
         GameManager gameManager = new GameManager();
 
-        // Initialize the GUI and pass the GameManager to it
-        GameGUI gameGUI = new GameGUI(gameManager);
+        // Initialize the Console GUI and pass the GameManager to it
+        ConsoleGUI consoleGUI = new ConsoleGUI(gameManager);
 
         // Run the application
-        gameGUI.Run();
+        consoleGUI.Run();
     }
 }
