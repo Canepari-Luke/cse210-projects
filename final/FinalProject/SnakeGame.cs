@@ -1,23 +1,64 @@
-using System;
-
 public class SnakeGame : Game
 {
-    public SnakeGame(GameManager manager, string playerName) : base(manager, playerName)
+    private Snake snake;
+    private Food food;
+
+    public SnakeGame(GameManager manager, string player) : base(manager, player)
     {
+        snake = new Snake(Console.WindowWidth / 2, Console.WindowHeight / 2);
+        food = new Food(Console.WindowWidth / 3, Console.WindowHeight / 3);
     }
 
     public override void Start()
     {
-        // Simplified game logic for Snake
         Console.Clear();
-        Console.WriteLine("Playing Snake...");
-        // Implement game logic here
+        bool playing = true;
+        while (playing)
+        {
+            Console.Clear();
+            snake.Draw();
+            food.Draw();
 
-        // Simulate a score for demo purposes
-        Random random = new Random();
-        int score = random.Next(0, 100);
-        Console.WriteLine($"Game over! Your score: {score}");
+            // Handle player input
+            if (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true).Key;
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        snake.Direction = (0, -1);
+                        break;
+                    case ConsoleKey.DownArrow:
+                        snake.Direction = (0, 1);
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        snake.Direction = (-1, 0);
+                        break;
+                    case ConsoleKey.RightArrow:
+                        snake.Direction = (1, 0);
+                        break;
+                }
+            }
 
-        gameManager.AddScore("Snake", playerName, score);
+            snake.Move();
+
+            // Check if the snake has eaten the food
+            if (snake.Body.First.Value.X == food.X && snake.Body.First.Value.Y == food.Y)
+            {
+                snake.Grow();
+                food.Relocate(Console.WindowWidth, Console.WindowHeight);
+            }
+
+            // Check if the snake has collided with itself
+            if (snake.HasCollidedWithSelf())
+            {
+                playing = false;
+            }
+
+            System.Threading.Thread.Sleep(100);
+        }
+
+        Console.WriteLine("Game over. Press any key to return to the game selection menu.");
+        Console.ReadKey();
     }
 }

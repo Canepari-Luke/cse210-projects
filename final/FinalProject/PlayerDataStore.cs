@@ -4,8 +4,7 @@ using System.IO;
 
 public class PlayerDataStore
 {
-    private const string DataFilePath = "schoolstuff/programmingwithclasses/cse210/final/FinalProject/players.csv"; // Path to your CSV file
-    private const string CsvDelimiter = ","; // CSV delimiter
+    private string DataFilePath = Path.Combine(Directory.GetCurrentDirectory(), "players.csv");
 
     public List<Player> Players { get; private set; }
 
@@ -16,17 +15,25 @@ public class PlayerDataStore
 
     public void SavePlayers()
     {
-        using (StreamWriter writer = new StreamWriter(DataFilePath))
+        try
         {
-            foreach (var player in Players)
+            using (StreamWriter writer = new StreamWriter(DataFilePath))
             {
-                string line = $"{player.Username}{CsvDelimiter}{player.Initials}";
-                foreach (var score in player.GameScores)
+                foreach (var player in Players)
                 {
-                    line += $"{CsvDelimiter}{score.Key}{CsvDelimiter}{score.Value}";
+                    string line = $"{player.Username},{player.Initials}";
+                    foreach (var score in player.GameScores)
+                    {
+                        line += $",{score.Key},{score.Value}";
+                    }
+                    writer.WriteLine(line);
                 }
-                writer.WriteLine(line);
             }
+            Console.WriteLine("Players saved successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while saving players: {ex.Message}");
         }
     }
 
@@ -35,27 +42,35 @@ public class PlayerDataStore
         List<Player> players = new List<Player>();
         if (File.Exists(DataFilePath))
         {
-            using (StreamReader reader = new StreamReader(DataFilePath))
+            try
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                using (StreamReader reader = new StreamReader(DataFilePath))
                 {
-                    string[] parts = line.Split(CsvDelimiter);
-                    string username = parts[0];
-                    string initials = parts[1];
-
-                    Player player = new Player(username, initials);
-
-                    // Load scores if available
-                    for (int i = 2; i < parts.Length; i += 2)
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
                     {
-                        string gameName = parts[i];
-                        int score = int.Parse(parts[i + 1]);
-                        player.UpdateScore(gameName, score);
-                    }
+                        string[] parts = line.Split(',');
+                        string username = parts[0];
+                        string initials = parts[1];
 
-                    players.Add(player);
+                        Player player = new Player(username, initials);
+
+                        // Load scores if available
+                        for (int i = 2; i < parts.Length; i += 2)
+                        {
+                            string gameName = parts[i];
+                            int score = int.Parse(parts[i + 1]);
+                            player.UpdateScore(gameName, score);
+                        }
+
+                        players.Add(player);
+                    }
                 }
+                Console.WriteLine("Players loaded successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while loading players: {ex.Message}");
             }
         }
         return players;

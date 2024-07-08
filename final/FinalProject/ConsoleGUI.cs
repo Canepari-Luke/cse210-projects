@@ -126,7 +126,6 @@ public class ConsoleGUI
     private void StartGame(Game game)
     {
         game.Start();
-        // Additional logic to integrate game into the console interface
         Console.WriteLine("Game over. Press any key to return to the game selection menu.");
         Console.ReadKey();
         ShowGameSelectionMenu();
