@@ -2,44 +2,48 @@ using System.Collections.Generic;
 
 public class Snake
 {
-    public LinkedList<(int X, int Y)> Body { get; private set; }
-    public (int X, int Y) Direction { get; set; }
+    public List<(int x, int y)> Body { get; private set; }
+    public (int x, int y) Direction { get; private set; }
 
     public Snake(int startX, int startY)
     {
-        Body = new LinkedList<(int X, int Y)>();
-        Body.AddFirst((startX, startY));
-        Direction = (1, 0);
+        Body = new List<(int x, int y)> { (startX, startY) };
+        Direction = (0, -1); // Start moving up
+    }
+
+    public void ChangeDirection((int x, int y) newDirection)
+    {
+        Direction = newDirection;
     }
 
     public void Move()
     {
-        var newHead = (X: Body.First.Value.X + Direction.X, Y: Body.First.Value.Y + Direction.Y);
-        Body.AddFirst(newHead);
-        Body.RemoveLast();
+        var head = Body[0];
+        var newHead = (head.x + Direction.x, head.y + Direction.y);
+        Body.Insert(0, newHead);
     }
 
     public void Grow()
     {
-        var tail = Body.Last.Value;
-        Body.AddLast(tail);
+        // Do nothing, the tail will not be removed, so the snake will grow
     }
 
-    public void Draw()
+    public void RemoveTail()
     {
-        foreach (var segment in Body)
-        {
-            Console.SetCursorPosition(segment.X, segment.Y);
-            Console.Write('O');
-        }
+        Body.RemoveAt(Body.Count - 1);
     }
 
-    public bool HasCollidedWithSelf()
+    public bool CheckCollision((int x, int y) position)
     {
-        var head = Body.First.Value;
-        foreach (var segment in Body.Skip(1))
+        return Body.Contains(position);
+    }
+
+    public bool CheckSelfCollision()
+    {
+        var head = Body[0];
+        for (int i = 1; i < Body.Count; i++)
         {
-            if (segment.X == head.X && segment.Y == head.Y)
+            if (Body[i] == head)
                 return true;
         }
         return false;

@@ -1,24 +1,24 @@
+using System;
+
 public class Food
 {
-    public int X { get; private set; }
-    public int Y { get; private set; }
+    public (int x, int y) Position { get; private set; }
 
-    public Food(int x, int y)
+    public Food(int boardWidth, int boardHeight, List<(int x, int y)> snakeBody)
     {
-        X = x;
-        Y = y;
+        GenerateNewFood(boardWidth, boardHeight, snakeBody);
     }
 
-    public void Draw()
+    public void GenerateNewFood(int boardWidth, int boardHeight, List<(int x, int y)> snakeBody)
     {
-        Console.SetCursorPosition(X, Y);
-        Console.Write('X');
-    }
+        Random random = new Random();
+        int x, y;
+        do
+        {
+            x = random.Next(1, boardWidth - 1);
+            y = random.Next(1, boardHeight - 1);
+        } while (snakeBody.Contains((x, y)));
 
-    public void Relocate(int maxX, int maxY)
-    {
-        var random = new Random();
-        X = random.Next(0, maxX);
-        Y = random.Next(0, maxY);
+        Position = (x, y);
     }
 }
