@@ -1,34 +1,27 @@
+using System;
+using Raylib_cs;
+
+
 public class Paddle
 {
-    public int X { get; set; }
-    public int Y { get; set; }
-    public int Length { get; set; }
+    private int x;
+    private int y;
+    private int height;
 
-    public Paddle(int x, int y, int length)
+    public Paddle(int startX, int startY, int paddleHeight)
     {
-        X = x;
-        Y = y;
-        Length = length;
-    }
-
-    public void MoveUp()
-    {
-        if (Y > 0)
-            Y--;
-    }
-
-    public void MoveDown()
-    {
-        if (Y + Length < Console.WindowHeight)
-            Y++;
+        x = startX;
+        y = startY;
+        height = paddleHeight;
     }
 
     public void Draw()
     {
-        for (int i = 0; i < Length; i++)
-        {
-            Console.SetCursorPosition(X, Y + i);
-            Console.Write('|');
-        }
+        Raylib.DrawRectangle(x, y, 10, height, Color.BLUE);
+    }
+
+    public void Move(int direction)
+    {
+        y += direction * 5; // Adjust speed as needed
     }
 }

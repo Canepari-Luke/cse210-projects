@@ -1,16 +1,24 @@
+using System;
+using Raylib_cs;
+
 public class Ball
 {
-    public int X { get; set; }
-    public int Y { get; set; }
-    public int SpeedX { get; set; }
-    public int SpeedY { get; set; }
+    private int x;
+    private int y;
+    private int radius;
+    private int speed;
 
-    public Ball(int x, int y, int speedX, int speedY)
+    public Ball(int startX, int startY, int ballRadius, int ballSpeed)
     {
-        X = x;
-        Y = y;
-        SpeedX = speedX;
-        SpeedY = speedY;
+        x = startX;
+        y = startY;
+        radius = ballRadius;
+        speed = ballSpeed;
+    }
+
+    public void Draw()
+    {
+        Raylib.DrawCircle(x, y, radius, Color.RED);
     }
 
     public void Move()

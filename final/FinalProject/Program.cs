@@ -1,4 +1,5 @@
 using System;
+using Raylib_cs;
 
 public class Program
 {
@@ -7,10 +8,10 @@ public class Program
         // Initialize the GameManager
         GameManager gameManager = new GameManager();
 
-        // Initialize the Console GUI and pass the GameManager to it
-        ConsoleGUI consoleGUI = new ConsoleGUI(gameManager);
+        // Initialize the Raylib GUI and pass the GameManager to it
+        RaylibGUI raylibGUI = new RaylibGUI(gameManager);
 
         // Run the application
-        consoleGUI.Run();
+        raylibGUI.Run();
     }
 }
