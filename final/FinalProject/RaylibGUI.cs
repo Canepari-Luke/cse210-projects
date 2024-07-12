@@ -1,25 +1,61 @@
-using System;
 using Raylib_cs;
+using Game.Casting;
+using Game.Services;
+using System.Collections.Generic;
 
 public class RaylibGUI
 {
-    private GameManager gameManager;
+    private VideoService videoService;
+    private KeyboardService keyboardService;
+    private List<Actor> actors;
 
-    public RaylibGUI(GameManager manager)
+    public RaylibGUI(int width, int height, int cellSize, int frameRate)
     {
-        gameManager = manager;
-        Raylib.InitWindow(800, 600, "Arcade");
-        Raylib.SetTargetFPS(60);
+        videoService = new VideoService("Pong Game", width, height, frameRate);
+        keyboardService = new KeyboardService(cellSize);
+        actors = new List<Actor>();
+
+        // Initialize paddles and ball
+        Paddle leftPaddle = new Paddle(50, height / 2 - 50, 100, new Color(0, 0, 255));
+        Paddle rightPaddle = new Paddle(width - 50 - 10, height / 2 - 50, 100, new Color(0, 0, 255)); // Adjusted position for right paddle
+        Ball ball = new Ball(width / 2, height / 2, 10, 2, 2, new Color(255, 0, 0));
+
+        actors.Add(leftPaddle);
+        actors.Add(rightPaddle);
+        actors.Add(ball);
     }
 
     public void Run()
     {
-        while (!Raylib.WindowShouldClose())
+        videoService.OpenWindow();
+
+        while (videoService.IsWindowOpen())
         {
-            ShowInitialMenu();
+            // Input
+            Point direction = keyboardService.GetDirection();
+
+            // Update
+            foreach (Actor actor in actors)
+            {
+                if (actor is Paddle paddle)
+                {
+                    paddle.Move(direction.GetY());
+                }
+                else if (actor is Ball ball)
+                {
+                    ball.Move();
+                }
+            }
+
+            // Output
+            videoService.ClearBuffer();
+            videoService.DrawActors(actors);
+            videoService.FlushBuffer();
         }
-        Raylib.CloseWindow();
+
+        videoService.CloseWindow();
     }
+
 
     private void ShowInitialMenu()
     {

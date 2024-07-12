@@ -1,46 +1,23 @@
-using System;
-using Raylib_cs;
+using Game.Casting;
+using Game.Services;
 
-public class Ball
+public class Ball : Actor
 {
-    private int x;
-    private int y;
-    private int radius;
-    private int speed;
+    private int dx;
+    private int dy;
 
-    public Ball(int startX, int startY, int ballRadius, int ballSpeed)
+    public Ball(int x, int y, int radius, int dx, int dy, Color color)
     {
-        x = startX;
-        y = startY;
-        radius = ballRadius;
-        speed = ballSpeed;
-    }
-
-    public void Draw()
-    {
-        Raylib.DrawCircle(x, y, radius, Color.RED);
+        SetPosition(new Point(x, y));
+        SetRadius(radius);
+        this.dx = dx;
+        this.dy = dy;
+        SetColor(color);
     }
 
     public void Move()
     {
-        X += SpeedX;
-        Y += SpeedY;
-
-        if (Y <= 0 || Y >= Console.WindowHeight - 1)
-            SpeedY = -SpeedY;
-    }
-
-    public void Draw()
-    {
-        Console.SetCursorPosition(X, Y);
-        Console.Write('O');
-    }
-
-    public void Reset(int x, int y, int speedX, int speedY)
-    {
-        X = x;
-        Y = y;
-        SpeedX = speedX;
-        SpeedY = speedY;
+        Point position = GetPosition();
+        SetPosition(new Point(position.GetX() + dx, position.GetY() + dy));
     }
 }

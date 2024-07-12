@@ -1,27 +1,18 @@
-using System;
-using Raylib_cs;
+using Game.Casting;
+using Game.Services;
 
-
-public class Paddle
+public class Paddle : Actor
 {
-    private int x;
-    private int y;
-    private int height;
-
-    public Paddle(int startX, int startY, int paddleHeight)
+    public Paddle(int x, int y, int height, Color color)
     {
-        x = startX;
-        y = startY;
-        height = paddleHeight;
+        SetPosition(new Point(x, y));
+        SetHeight(height);
+        SetColor(color);
     }
 
-    public void Draw()
+    public void Move(int dy)
     {
-        Raylib.DrawRectangle(x, y, 10, height, Color.BLUE);
-    }
-
-    public void Move(int direction)
-    {
-        y += direction * 5; // Adjust speed as needed
+        Point position = GetPosition();
+        SetPosition(new Point(position.GetX(), position.GetY() + dy));
     }
 }
