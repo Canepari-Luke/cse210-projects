@@ -1,21 +1,21 @@
-using System.Collections.Generic;
 using Raylib_cs;
+using System.Collections.Generic;
 using Game.Casting;
 
 namespace Game.Services
 {
     public class VideoService
     {
+        private string title;
         private int width;
         private int height;
-        private string title;
         private int frameRate;
 
         public VideoService(string title, int width, int height, int frameRate)
         {
+            this.title = title;
             this.width = width;
             this.height = height;
-            this.title = title;
             this.frameRate = frameRate;
         }
 
@@ -30,25 +30,22 @@ namespace Game.Services
             Raylib.CloseWindow();
         }
 
+        public bool IsWindowOpen()
+        {
+            return !Raylib.WindowShouldClose();
+        }
+
         public void ClearBuffer()
         {
             Raylib.BeginDrawing();
-            Raylib.ClearBackground(Raylib_cs.Color.BLACK);
-        }
-
-        public void DrawActor(Actor actor)
-        {
-            int x = actor.GetPosition().GetX();
-            int y = actor.GetPosition().GetY();
-            Color color = actor.GetColor();
-            Raylib.DrawRectangle(x, y, actor.GetWidth(), actor.GetHeight(), ToRaylibColor(color));
+            Raylib.ClearBackground(Color.BLACK);
         }
 
         public void DrawActors(List<Actor> actors)
         {
             foreach (Actor actor in actors)
             {
-                DrawActor(actor);
+                actor.Draw();
             }
         }
 
@@ -57,9 +54,14 @@ namespace Game.Services
             Raylib.EndDrawing();
         }
 
-        private Raylib_cs.Color ToRaylibColor(Color color)
+        public int GetWidth()
         {
-            return new Raylib_cs.Color(color.GetRed(), color.GetGreen(), color.GetBlue(), color.GetAlpha());
+            return width;
+        }
+
+        public int GetHeight()
+        {
+            return height;
         }
     }
 }

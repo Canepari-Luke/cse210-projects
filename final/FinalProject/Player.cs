@@ -3,39 +3,48 @@ using System.Collections.Generic;
 
 public class Player
 {
-    public string Username { get; set; }
-    public string Initials { get; set; }
-    public Dictionary<string, int> GameScores { get; set; }
+    public string Username { get; private set; }
+    public string Initials { get; private set; }
+    private Dictionary<string, int> gameScores;
 
     public Player(string username, string initials)
     {
         Username = username;
         Initials = initials;
-        GameScores = new Dictionary<string, int>();
+        gameScores = new Dictionary<string, int>();
     }
 
     public void UpdateScore(string gameName, int score)
     {
-        if (GameScores.ContainsKey(gameName))
+        if (gameScores.ContainsKey(gameName))
         {
-            if (score > GameScores[gameName])
+            if (score > gameScores[gameName])
             {
-                GameScores[gameName] = score;
+                gameScores[gameName] = score;
             }
         }
         else
         {
-            GameScores[gameName] = score;
+            gameScores[gameName] = score;
         }
     }
 
     public int GetTotalScore()
     {
         int totalScore = 0;
-        foreach (var score in GameScores.Values)
+        foreach (var score in gameScores.Values)
         {
             totalScore += score;
         }
         return totalScore;
+    }
+
+    public int GetScoreForGame(string gameName)
+    {
+        if (gameScores.ContainsKey(gameName))
+        {
+            return gameScores[gameName];
+        }
+        return 0;
     }
 }

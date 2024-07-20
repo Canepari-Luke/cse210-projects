@@ -1,23 +1,38 @@
-using Game.Casting;
-using Game.Services;
-
-public class Ball : Actor
+public class Ball
 {
-    private int dx;
-    private int dy;
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int SpeedX { get; set; }
+    public int SpeedY { get; set; }
 
-    public Ball(int x, int y, int radius, int dx, int dy, Color color)
+    public Ball(int x, int y, int speedX, int speedY)
     {
-        SetPosition(new Point(x, y));
-        SetRadius(radius);
-        this.dx = dx;
-        this.dy = dy;
-        SetColor(color);
+        X = x;
+        Y = y;
+        SpeedX = speedX;
+        SpeedY = speedY;
     }
 
     public void Move()
     {
-        Point position = GetPosition();
-        SetPosition(new Point(position.GetX() + dx, position.GetY() + dy));
+        X += SpeedX;
+        Y += SpeedY;
+
+        if (Y <= 0 || Y >= Console.WindowHeight - 1)
+            SpeedY = -SpeedY;
+    }
+
+    public void Draw()
+    {
+        Console.SetCursorPosition(X, Y);
+        Console.Write('O');
+    }
+
+    public void Reset(int x, int y, int speedX, int speedY)
+    {
+        X = x;
+        Y = y;
+        SpeedX = speedX;
+        SpeedY = speedY;
     }
 }

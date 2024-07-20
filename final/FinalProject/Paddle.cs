@@ -1,18 +1,34 @@
-using Game.Casting;
-using Game.Services;
-
-public class Paddle : Actor
+public class Paddle
 {
-    public Paddle(int x, int y, int height, Color color)
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int Length { get; set; }
+
+    public Paddle(int x, int y, int length)
     {
-        SetPosition(new Point(x, y));
-        SetHeight(height);
-        SetColor(color);
+        X = x;
+        Y = y;
+        Length = length;
     }
 
-    public void Move(int dy)
+    public void MoveUp()
     {
-        Point position = GetPosition();
-        SetPosition(new Point(position.GetX(), position.GetY() + dy));
+        if (Y > 0)
+            Y--;
+    }
+
+    public void MoveDown()
+    {
+        if (Y + Length < Console.WindowHeight)
+            Y++;
+    }
+
+    public void Draw()
+    {
+        for (int i = 0; i < Length; i++)
+        {
+            Console.SetCursorPosition(X, Y + i);
+            Console.Write('|');
+        }
     }
 }

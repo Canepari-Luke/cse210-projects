@@ -1,94 +1,23 @@
-using Raylib_cs;
+using System;
+using System.Threading;
 
 public class TetrisGame : Game
 {
-    private TetrisBoard board;
-    private Tetrimino currentPiece;
-    private Tetrimino nextPiece;
-
-    public TetrisGame(GameManager manager, string player) : base(manager, player)
-    {
-        board = new TetrisBoard();
-        currentPiece = new Tetrimino();
-        nextPiece = new Tetrimino();
-    }
+    public TetrisGame(GameManager manager, string player) : base(manager, player) { }
 
     public override void Start()
     {
-        bool playing = true;
-        while (playing && !Raylib.WindowShouldClose())
-        {
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(Color.BLACK);
+        Console.Clear();
+        Console.WriteLine("Starting Tetris...");
 
-            board.Draw();
-            currentPiece.Draw();
-            nextPiece.Draw();
+        // Implement Tetris game logic here
+        Console.WriteLine("Press any key to simulate playing Tetris.");
+        Console.ReadKey();
 
-            currentPiece.MoveDown();
+        // Example score addition
+        gameManager.AddScore("Tetris", playerName, new Random().Next(1, 100));
 
-            if (!currentPiece.CanMoveDown() && board.IsValidPosition(currentPiece))
-            {
-                board.AddPiece(currentPiece);
-                currentPiece = nextPiece;
-                nextPiece = new Tetrimino();
-            }
-
-            Raylib.EndDrawing();
-        }
-    }
-}
-
-public class TetrisBoard
-{
-    private int[,] grid;
-
-    public TetrisBoard()
-    {
-        grid = new int[10, 20]; // 10x20 grid for Tetris
-    }
-
-    public void Draw()
-    {
-        // Draw the Tetris board
-    }
-
-    public bool IsValidPosition(Tetrimino piece)
-    {
-        // Check if the piece is in a valid position on the board
-        return true; // Replace with actual logic
-    }
-
-    public void AddPiece(Tetrimino piece)
-    {
-        // Add the piece to the board
-    }
-}
-
-public class Tetrimino
-{
-    private int[,] shape;
-    private int x;
-    private int y;
-
-    public Tetrimino()
-    {
-        // Initialize Tetrimino shape and position
-    }
-
-    public void Draw()
-    {
-        // Draw the Tetrimino shape on the screen
-    }
-
-    public void MoveDown()
-    {
-        // Move the Tetrimino down one step
-    }
-
-    public bool CanMoveDown()
-    {
-        // Check if the Tetrimino can move down
-        return true; // Replace with actual logic
+        Console.WriteLine("Tetris game finished. Score saved.");
+        Thread.Sleep(1000);
     }
 }

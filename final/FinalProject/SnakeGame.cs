@@ -1,136 +1,116 @@
 using System;
-using Raylib_cs;
-
+using System.Collections.Generic;
+using System.Threading;
 
 public class SnakeGame : Game
 {
+    private const int BoardWidth = 30;
+    private const int BoardHeight = 20;
     private Snake snake;
     private Food food;
+    private int score;
 
     public SnakeGame(GameManager manager, string player) : base(manager, player)
     {
-        snake = new Snake(20, 20);
-        food = new Food();
+        snake = new Snake(BoardWidth / 2, BoardHeight / 2);
+        food = new Food(BoardWidth, BoardHeight, snake.Body);
+        score = 0;
     }
 
     public override void Start()
     {
-        bool playing = true;
-        while (playing && !Raylib.WindowShouldClose())
+        Console.Clear();
+        while (true)
         {
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(Color.BLACK);
-
-            snake.Move();
-            snake.Draw();
-            food.Draw();
-
-            if (snake.CheckCollision(food))
+            DrawBoard();
+            if (Console.KeyAvailable)
             {
-                snake.Eat(food);
-                food = new Food();
+                var key = Console.ReadKey(true).Key;
+                ChangeDirection(key);
             }
-
-            if (snake.CheckSelfCollision() || snake.CheckWallCollision())
+            if (!MoveSnake())
             {
-                playing = false;
+                break; // Game over
             }
-
-            Raylib.EndDrawing();
+            Thread.Sleep(100);
         }
+
+        Console.Clear();
+        Console.WriteLine($"Game over. Your score: {score}");
+        gameManager.AddScore("Snake", playerName, score);
+        Console.WriteLine("Press any key to return to the game selection menu.");
+        Console.ReadKey();
     }
-}
 
-public class Snake
-{
-    private const int GridSize = 20;
-    private const int InitialLength = 3;
-
-    private List<Vector2> body;
-    private Vector2 direction;
-
-    public Snake(int startX, int startY)
+    private void DrawBoard()
     {
-        body = new List<Vector2>();
-        direction = new Vector2(1, 0); // Start moving right initially
-
-        for (int i = 0; i < InitialLength; i++)
+        Console.SetCursorPosition(0, 0);
+        for (int y = 0; y < BoardHeight; y++)
         {
-            body.Add(new Vector2(startX - i, startY));
-        }
-    }
-
-    public void Move()
-    {
-        Vector2 nextPosition = body[0] + direction;
-
-        // Move body
-        for (int i = body.Count - 1; i > 0; i--)
-        {
-            body[i] = body[i - 1];
-        }
-        body[0] = nextPosition;
-    }
-
-    public void Draw()
-    {
-        foreach (var segment in body)
-        {
-            Raylib.DrawRectangle((int)segment.X * GridSize, (int)segment.Y * GridSize, GridSize, GridSize, Color.GREEN);
-        }
-    }
-
-    public void Eat(Food food)
-    {
-        body.Add(body[body.Count - 1]); // Grow the snake
-    }
-
-    public bool CheckCollision(Food food)
-    {
-        return body[0].X == food.Position.X && body[0].Y == food.Position.Y;
-    }
-
-    public bool CheckSelfCollision()
-    {
-        for (int i = 1; i < body.Count; i++)
-        {
-            if (body[0].X == body[i].X && body[0].Y == body[i].Y)
+            for (int x = 0; x < BoardWidth; x++)
             {
-                return true;
+                if (x == 0 || x == BoardWidth - 1 || y == 0 || y == BoardHeight - 1)
+                {
+                    Console.Write("#");
+                }
+                else if (snake.Body.Contains((x, y)))
+                {
+                    Console.Write("O");
+                }
+                else if (food.Position == (x, y))
+                {
+                    Console.Write("X");
+                }
+                else
+                {
+                    Console.Write(" ");
+                }
             }
+            Console.WriteLine();
         }
-        return false;
+        Console.WriteLine($"Score: {score}");
     }
 
-    public bool CheckWallCollision()
+    private void ChangeDirection(ConsoleKey key)
     {
-        return body[0].X < 0 || body[0].X >= Raylib.GetScreenWidth() / GridSize ||
-               body[0].Y < 0 || body[0].Y >= Raylib.GetScreenHeight() / GridSize;
-    }
-}
-
-public class Food
-{
-    public Vector2 Position { get; private set; }
-
-    public Food()
-    {
-        RandomizePosition();
-    }
-
-    private void RandomizePosition()
-    {
-        Position = new Vector2(RandomNumber(0, Raylib.GetScreenWidth() / 20 - 1), RandomNumber(0, Raylib.GetScreenHeight() / 20 - 1));
+        switch (key)
+        {
+            case ConsoleKey.UpArrow:
+                if (snake.Direction != (0, 1)) snake.ChangeDirection((0, -1));
+                break;
+            case ConsoleKey.DownArrow:
+                if (snake.Direction != (0, -1)) snake.ChangeDirection((0, 1));
+                break;
+            case ConsoleKey.LeftArrow:
+                if (snake.Direction != (1, 0)) snake.ChangeDirection((-1, 0));
+                break;
+            case ConsoleKey.RightArrow:
+                if (snake.Direction != (-1, 0)) snake.ChangeDirection((1, 0));
+                break;
+        }
     }
 
-    public void Draw()
+    private bool MoveSnake()
     {
-        Raylib.DrawRectangle((int)Position.X * 20, (int)Position.Y * 20, 20, 20, Color.RED);
-    }
+        snake.Move();
 
-    private int RandomNumber(int min, int max)
-    {
-        Random random = new Random();
-        return random.Next(min, max + 1);
+        var head = snake.Body[0];
+
+        if (head.x <= 0 || head.x >= BoardWidth - 1 || head.y <= 0 || head.y >= BoardHeight - 1 || snake.CheckSelfCollision())
+        {
+            return false; // Hit a wall or itself
+        }
+
+        if (head == food.Position)
+        {
+            score += 10;
+            food.GenerateNewFood(BoardWidth, BoardHeight, snake.Body);
+        }
+        else
+        {
+            snake.RemoveTail();
+        }
+
+        return true;
     }
 }
