@@ -1,23 +1,26 @@
 using System;
 using System.Threading;
 
-public class TetrisGame : Game
+namespace Arcade
 {
-    public TetrisGame(GameManager manager, string player) : base(manager, player) { }
-
-    public override void Start()
+    public class TetrisGame : Game
     {
-        Console.Clear();
-        Console.WriteLine("Starting Tetris...");
+        public TetrisGame(GameManager manager, string player) : base(manager, player) { }
 
-        // Implement Tetris game logic here
-        Console.WriteLine("Press any key to simulate playing Tetris.");
-        Console.ReadKey();
+        public override void Start()
+        {
+            Console.Clear();
+            Console.WriteLine("Starting Tetris...");
 
-        // Example score addition
-        gameManager.AddScore("Tetris", playerName, new Random().Next(1, 100));
+            // Implement Tetris game logic here
+            Console.WriteLine("Press any key to simulate playing Tetris.");
+            Console.ReadKey();
 
-        Console.WriteLine("Tetris game finished. Score saved.");
-        Thread.Sleep(1000);
+            // Example score addition
+            gameManager.AddScore("Tetris", playerName, new Random().Next(1, 100));
+
+            Console.WriteLine("Tetris game finished. Score saved.");
+            Thread.Sleep(1000);
+        }
     }
 }

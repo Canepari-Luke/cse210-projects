@@ -1,115 +1,74 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+
 namespace Arcade
 {
     public class SnakeGame : Game
     {
-        private const int BoardWidth = 30;
-        private const int BoardHeight = 20;
-        private Snake snake;
+        private List<(int x, int y)> snakeBody;
         private Food food;
-        private int score;
+        private int boardWidth = 80;
+        private int boardHeight = 20;
 
         public SnakeGame(GameManager manager, string player) : base(manager, player)
         {
-            snake = new Snake(BoardWidth / 2, BoardHeight / 2);
-            food = new Food(BoardWidth, BoardHeight, snake.Body);
-            score = 0;
+            snakeBody = new List<(int x, int y)> { (10, 10) };
+            food = new Food(boardWidth, boardHeight, snakeBody);
         }
 
         public override void Start()
         {
             Console.Clear();
-            while (true)
+            Console.WriteLine("Starting Snake...");
+
+            // Implement Snake game logic here
+            for (int i = 0; i < 10; i++)
             {
+                Console.Clear();
                 DrawBoard();
-                if (Console.KeyAvailable)
-                {
-                    var key = Console.ReadKey(true).Key;
-                    ChangeDirection(key);
-                }
-                if (!MoveSnake())
-                {
-                    break; // Game over
-                }
-                Thread.Sleep(100);
+                DrawSnake();
+                DrawFood();
+                Thread.Sleep(500);
             }
 
-            Console.Clear();
-            Console.WriteLine($"Game over. Your score: {score}");
-            gameManager.AddScore("Snake", playerName, score); // This should now be recognized
-            Console.WriteLine("Press any key to return to the game selection menu.");
-            Console.ReadKey();
+            // Example score addition
+            gameManager.AddScore("Snake", playerName, new Random().Next(1, 100));
+
+            Console.WriteLine("Snake game finished. Score saved.");
+            Thread.Sleep(1000);
         }
 
         private void DrawBoard()
         {
             Console.SetCursorPosition(0, 0);
-            for (int y = 0; y < BoardHeight; y++)
+            for (int i = 0; i < boardWidth; i++)
+                Console.Write('#');
+            for (int i = 1; i < boardHeight - 1; i++)
             {
-                for (int x = 0; x < BoardWidth; x++)
-                {
-                    if (x == 0 || x == BoardWidth - 1 || y == 0 || y == BoardHeight - 1)
-                    {
-                        Console.Write("#");
-                    }
-                    else if (snake.Body.Contains((x, y)))
-                    {
-                        Console.Write("O");
-                    }
-                    else if (food.Position == (x, y))
-                    {
-                        Console.Write("X");
-                    }
-                    else
-                    {
-                        Console.Write(" ");
-                    }
-                }
-                Console.WriteLine();
+                Console.SetCursorPosition(0, i);
+                Console.Write('#');
+                Console.SetCursorPosition(boardWidth - 1, i);
+                Console.Write('#');
             }
-            Console.WriteLine($"Score: {score}");
+            Console.SetCursorPosition(0, boardHeight - 1);
+            for (int i = 0; i < boardWidth; i++)
+                Console.Write('#');
         }
 
-        private void ChangeDirection(ConsoleKey key)
+        private void DrawSnake()
         {
-            switch (key)
+            foreach (var segment in snakeBody)
             {
-                case ConsoleKey.UpArrow:
-                    if (snake.Direction != (0, 1)) snake.ChangeDirection((0, -1));
-                    break;
-                case ConsoleKey.DownArrow:
-                    if (snake.Direction != (0, -1)) snake.ChangeDirection((0, 1));
-                    break;
-                case ConsoleKey.LeftArrow:
-                    if (snake.Direction != (1, 0)) snake.ChangeDirection((-1, 0));
-                    break;
-                case ConsoleKey.RightArrow:
-                    if (snake.Direction != (-1, 0)) snake.ChangeDirection((1, 0));
-                    break;
+                Console.SetCursorPosition(segment.x, segment.y);
+                Console.Write('O');
             }
         }
 
-        private bool MoveSnake()
+        private void DrawFood()
         {
-            snake.Move();
-
-            var head = snake.Body[0];
-
-            if (head.x <= 0 || head.x >= BoardWidth - 1 || head.y <= 0 || head.y >= BoardHeight - 1 || snake.CheckSelfCollision())
-            {
-                return false; // Hit a wall or itself
-            }
-
-            if (head == food.Position)
-            {
-                score += 10;
-                food.GenerateNewFood(BoardWidth, BoardHeight, snake.Body);
-            }
-            else
-            {
-                snake.RemoveTail();
-            }
-
-            return true;
+            Console.SetCursorPosition(food.Position.x, food.Position.y);
+            Console.Write('*');
         }
     }
 }

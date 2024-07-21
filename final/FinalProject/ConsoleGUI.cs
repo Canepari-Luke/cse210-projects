@@ -1,140 +1,144 @@
 using System;
+using System.Collections.Generic;
 
-public class ConsoleGUI
+namespace Arcade
 {
-    private GameManager gameManager;
-
-    public ConsoleGUI(GameManager manager)
+    public class ConsoleGUI
     {
-        gameManager = manager;
-    }
+        private GameManager gameManager;
 
-    public void Run()
-    {
-        ShowInitialMenu();
-    }
-
-    private void ShowInitialMenu()
-    {
-        Console.Clear();
-        Console.WriteLine("Arcade - Initial Menu");
-        Console.WriteLine("1. New Player");
-        Console.WriteLine("2. Load Player");
-        Console.Write("Select an option: ");
-
-        string choice = Console.ReadLine();
-        switch (choice)
+        public ConsoleGUI(GameManager manager)
         {
-            case "1":
-                NewPlayer();
-                break;
-            case "2":
-                LoadPlayer();
-                break;
-            default:
-                Console.WriteLine("Invalid choice. Press any key to try again.");
-                Console.ReadKey();
-                ShowInitialMenu();
-                break;
+            gameManager = manager;
         }
-    }
 
-    private void NewPlayer()
-    {
-        Console.Clear();
-        Console.Write("Enter username: ");
-        string username = Console.ReadLine();
-        Console.Write("Enter initials (3 characters): ");
-        string initials = Console.ReadLine();
-
-        if (!string.IsNullOrEmpty(username) && initials.Length == 3)
+        public void Run()
         {
-            gameManager.CreateNewPlayer(username, initials);
-            ShowGameSelectionMenu();
+            ShowInitialMenu();
         }
-        else
-        {
-            Console.WriteLine("Invalid input. Press any key to try again.");
-            Console.ReadKey();
-            NewPlayer();
-        }
-    }
 
-    private void LoadPlayer()
-    {
-        Console.Clear();
-        Console.WriteLine("Select Player:");
-        var players = gameManager.GetPlayers();
-        for (int i = 0; i < players.Count; i++)
+        private void ShowInitialMenu()
         {
-            Console.WriteLine($"{i + 1}. {players[i].Initials} - {players[i].Username}");
-        }
-        Console.Write("Select an option: ");
-        string choice = Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("Arcade - Initial Menu");
+            Console.WriteLine("1. New Player");
+            Console.WriteLine("2. Load Player");
+            Console.Write("Select an option: ");
 
-        if (int.TryParse(choice, out int playerIndex) && playerIndex > 0 && playerIndex <= players.Count)
-        {
-            gameManager.LoadPlayer(players[playerIndex - 1].Initials);
-            ShowGameSelectionMenu();
+            string choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    NewPlayer();
+                    break;
+                case "2":
+                    LoadPlayer();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Press any key to try again.");
+                    Console.ReadKey();
+                    ShowInitialMenu();
+                    break;
+            }
         }
-        else
-        {
-            Console.WriteLine("Invalid choice. Press any key to try again.");
-            Console.ReadKey();
-            LoadPlayer();
-        }
-    }
 
-    private void ShowGameSelectionMenu()
-    {
-        Console.Clear();
-        Console.WriteLine($"Player: {gameManager.CurrentPlayer.Username} ({gameManager.CurrentPlayer.Initials})");
-        Console.WriteLine($"Total Score: {gameManager.GetTotalScore()}");
-        Console.WriteLine("1. Pong");
-        Console.WriteLine("2. Snake");
-        Console.WriteLine("3. Hangman");
-        Console.WriteLine("4. Tetris");
-        Console.WriteLine("5. Save and Quit");
-        Console.Write("Select a game to play: ");
-
-        string choice = Console.ReadLine();
-        switch (choice)
+        private void NewPlayer()
         {
-            case "1":
-                StartGame(new PongGame(gameManager, gameManager.CurrentPlayer.Initials));
-                break;
-            case "2":
-                StartGame(new SnakeGame(gameManager, gameManager.CurrentPlayer.Initials));
-                break;
-            case "3":
-                StartGame(new HangmanGame(gameManager, gameManager.CurrentPlayer.Initials));
-                break;
-            case "4":
-                StartGame(new TetrisGame(gameManager, gameManager.CurrentPlayer.Initials));
-                break;
-            case "5":
-                SaveAndQuit();
-                break;
-            default:
-                Console.WriteLine("Invalid choice. Press any key to try again.");
-                Console.ReadKey();
+            Console.Clear();
+            Console.Write("Enter username: ");
+            string username = Console.ReadLine();
+            Console.Write("Enter initials (3 characters): ");
+            string initials = Console.ReadLine();
+
+            if (!string.IsNullOrEmpty(username) && initials.Length == 3)
+            {
+                gameManager.CreateNewPlayer(username, initials);
                 ShowGameSelectionMenu();
-                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Press any key to try again.");
+                Console.ReadKey();
+                NewPlayer();
+            }
         }
-    }
 
-    private void StartGame(Game game)
-    {
-        game.Start();
-        Console.WriteLine("Game over. Press any key to return to the game selection menu.");
-        Console.ReadKey();
-        ShowGameSelectionMenu();
-    }
+        private void LoadPlayer()
+        {
+            Console.Clear();
+            Console.WriteLine("Select Player:");
+            var players = gameManager.GetPlayers();
+            for (int i = 0; i < players.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {players[i].Initials} - {players[i].Username}");
+            }
+            Console.Write("Select an option: ");
+            string choice = Console.ReadLine();
 
-    private void SaveAndQuit()
-    {
-        gameManager.SaveCurrentPlayer();
-        Console.WriteLine("Game saved. Press any key to exit.");
-        Console.ReadKey();
+            if (int.TryParse(choice, out int playerIndex) && playerIndex > 0 && playerIndex <= players.Count)
+            {
+                gameManager.LoadPlayer(players[playerIndex - 1].Initials);
+                ShowGameSelectionMenu();
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice. Press any key to try again.");
+                Console.ReadKey();
+                LoadPlayer();
+            }
+        }
+
+        private void ShowGameSelectionMenu()
+        {
+            Console.Clear();
+            Console.WriteLine($"Player: {gameManager.CurrentPlayer.Username} ({gameManager.CurrentPlayer.Initials})");
+            Console.WriteLine($"Total Score: {gameManager.GetTotalScore()}");
+            Console.WriteLine("1. Pong");
+            Console.WriteLine("2. Snake");
+            Console.WriteLine("3. Hangman");
+            Console.WriteLine("4. Tetris");
+            Console.WriteLine("5. Save and Quit");
+            Console.Write("Select a game to play: ");
+
+            string choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    StartGame(new PongGame(gameManager, gameManager.CurrentPlayer.Initials));
+                    break;
+                case "2":
+                    StartGame(new SnakeGame(gameManager, gameManager.CurrentPlayer.Initials));
+                    break;
+                case "3":
+                    StartGame(new HangmanGame(gameManager, gameManager.CurrentPlayer.Initials));
+                    break;
+                case "4":
+                    StartGame(new TetrisGame(gameManager, gameManager.CurrentPlayer.Initials));
+                    break;
+                case "5":
+                    SaveAndQuit();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Press any key to try again.");
+                    Console.ReadKey();
+                    ShowGameSelectionMenu();
+                    break;
+            }
+        }
+
+        private void StartGame(Game game)
+        {
+            game.Start();
+            Console.WriteLine("Game over. Press any key to return to the game selection menu.");
+            Console.ReadKey();
+            ShowGameSelectionMenu();
+        }
+
+        private void SaveAndQuit()
+        {
+            gameManager.SaveCurrentPlayer();
+            Console.WriteLine("Game saved. Press any key to exit.");
+            Console.ReadKey();
+        }
     }
 }

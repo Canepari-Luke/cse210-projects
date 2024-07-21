@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Arcade
 {
     public class Player
@@ -16,35 +18,14 @@ namespace Arcade
         public void UpdateScore(string gameName, int score)
         {
             if (gameScores.ContainsKey(gameName))
-            {
-                if (score > gameScores[gameName])
-                {
-                    gameScores[gameName] = score;
-                }
-            }
-            else
-            {
                 gameScores[gameName] = score;
-            }
+            else
+                gameScores.Add(gameName, score);
         }
 
         public int GetTotalScore()
         {
-            int totalScore = 0;
-            foreach (var score in gameScores.Values)
-            {
-                totalScore += score;
-            }
-            return totalScore;
-        }
-
-        public int GetScoreForGame(string gameName)
-        {
-            if (gameScores.ContainsKey(gameName))
-            {
-                return gameScores[gameName];
-            }
-            return 0;
+            return gameScores.Values.Sum();
         }
     }
 }

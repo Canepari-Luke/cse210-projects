@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+
 namespace Arcade
 {
     public class HangmanGame : Game
