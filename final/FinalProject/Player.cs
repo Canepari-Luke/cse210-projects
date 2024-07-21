@@ -1,50 +1,50 @@
-using System;
-using System.Collections.Generic;
-
-public class Player
+namespace Arcade
 {
-    public string Username { get; private set; }
-    public string Initials { get; private set; }
-    private Dictionary<string, int> gameScores;
-
-    public Player(string username, string initials)
+    public class Player
     {
-        Username = username;
-        Initials = initials;
-        gameScores = new Dictionary<string, int>();
-    }
+        public string Username { get; private set; }
+        public string Initials { get; private set; }
+        private Dictionary<string, int> gameScores;
 
-    public void UpdateScore(string gameName, int score)
-    {
-        if (gameScores.ContainsKey(gameName))
+        public Player(string username, string initials)
         {
-            if (score > gameScores[gameName])
+            Username = username;
+            Initials = initials;
+            gameScores = new Dictionary<string, int>();
+        }
+
+        public void UpdateScore(string gameName, int score)
+        {
+            if (gameScores.ContainsKey(gameName))
+            {
+                if (score > gameScores[gameName])
+                {
+                    gameScores[gameName] = score;
+                }
+            }
+            else
             {
                 gameScores[gameName] = score;
             }
         }
-        else
-        {
-            gameScores[gameName] = score;
-        }
-    }
 
-    public int GetTotalScore()
-    {
-        int totalScore = 0;
-        foreach (var score in gameScores.Values)
+        public int GetTotalScore()
         {
-            totalScore += score;
+            int totalScore = 0;
+            foreach (var score in gameScores.Values)
+            {
+                totalScore += score;
+            }
+            return totalScore;
         }
-        return totalScore;
-    }
 
-    public int GetScoreForGame(string gameName)
-    {
-        if (gameScores.ContainsKey(gameName))
+        public int GetScoreForGame(string gameName)
         {
-            return gameScores[gameName];
+            if (gameScores.ContainsKey(gameName))
+            {
+                return gameScores[gameName];
+            }
+            return 0;
         }
-        return 0;
     }
 }

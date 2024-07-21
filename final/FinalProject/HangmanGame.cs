@@ -1,23 +1,23 @@
-using System;
-using System.Threading;
-
-public class HangmanGame : Game
+namespace Arcade
 {
-    public HangmanGame(GameManager manager, string player) : base(manager, player) { }
-
-    public override void Start()
+    public class HangmanGame : Game
     {
-        Console.Clear();
-        Console.WriteLine("Starting Hangman...");
+        public HangmanGame(GameManager manager, string player) : base(manager, player) { }
 
-        // Implement Hangman game logic here
-        Console.WriteLine("Press any key to simulate playing Hangman.");
-        Console.ReadKey();
+        public override void Start()
+        {
+            Console.Clear();
+            Console.WriteLine("Starting Hangman...");
 
-        // Example score addition
-        gameManager.AddScore("Hangman", playerName, new Random().Next(1, 100));
+            // Implement Hangman game logic here
+            Console.WriteLine("Press any key to simulate playing Hangman.");
+            Console.ReadKey();
 
-        Console.WriteLine("Hangman game finished. Score saved.");
-        Thread.Sleep(1000);
+            // Example score addition
+            gameManager.AddScore("Hangman", playerName, new Random().Next(1, 100));
+
+            Console.WriteLine("Hangman game finished. Score saved.");
+            Thread.Sleep(1000);
+        }
     }
 }
