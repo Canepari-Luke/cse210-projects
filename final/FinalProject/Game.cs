@@ -1,4 +1,4 @@
-namespace Arcade
+namespace FinalProject
 {
     public abstract class Game
     {

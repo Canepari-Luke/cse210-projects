@@ -1,25 +1,24 @@
-using System;
-using System.Collections.Generic;
-
 public class Food
 {
-    public (int x, int y) Position { get; private set; }
+    public int X { get; private set; }
+    public int Y { get; private set; }
 
-    public Food(int boardWidth, int boardHeight, List<(int x, int y)> snakeBody)
+    public Food(int x, int y)
     {
-        GenerateNewFood(boardWidth, boardHeight, snakeBody);
+        X = x;
+        Y = y;
     }
 
-    public void GenerateNewFood(int boardWidth, int boardHeight, List<(int x, int y)> snakeBody)
+    public void Draw()
     {
-        Random random = new Random();
-        int x, y;
-        do
-        {
-            x = random.Next(1, boardWidth - 1);
-            y = random.Next(1, boardHeight - 1);
-        } while (snakeBody.Contains((x, y)));
+        Console.SetCursorPosition(X, Y);
+        Console.Write('X');
+    }
 
-        Position = (x, y);
+    public void Relocate(int maxX, int maxY)
+    {
+        var random = new Random();
+        X = random.Next(0, maxX);
+        Y = random.Next(0, maxY);
     }
 }

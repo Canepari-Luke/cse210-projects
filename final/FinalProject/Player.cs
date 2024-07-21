@@ -1,31 +1,41 @@
+using System;
 using System.Collections.Generic;
 
-namespace Arcade
+public class Player
 {
-    public class Player
+    public string Username { get; set; }
+    public string Initials { get; set; }
+    public Dictionary<string, int> GameScores { get; set; }
+
+    public Player(string username, string initials)
     {
-        public string Username { get; private set; }
-        public string Initials { get; private set; }
-        private Dictionary<string, int> gameScores;
+        Username = username;
+        Initials = initials;
+        GameScores = new Dictionary<string, int>();
+    }
 
-        public Player(string username, string initials)
+    public void UpdateScore(string gameName, int score)
+    {
+        if (GameScores.ContainsKey(gameName))
         {
-            Username = username;
-            Initials = initials;
-            gameScores = new Dictionary<string, int>();
+            if (score > GameScores[gameName])
+            {
+                GameScores[gameName] = score;
+            }
         }
+        else
+        {
+            GameScores[gameName] = score;
+        }
+    }
 
-        public void UpdateScore(string gameName, int score)
+    public int GetTotalScore()
+    {
+        int totalScore = 0;
+        foreach (var score in GameScores.Values)
         {
-            if (gameScores.ContainsKey(gameName))
-                gameScores[gameName] = score;
-            else
-                gameScores.Add(gameName, score);
+            totalScore += score;
         }
-
-        public int GetTotalScore()
-        {
-            return gameScores.Values.Sum();
-        }
+        return totalScore;
     }
 }

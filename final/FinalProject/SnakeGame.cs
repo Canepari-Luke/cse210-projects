@@ -1,74 +1,64 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-
-namespace Arcade
+public class SnakeGame : Game
 {
-    public class SnakeGame : Game
+    private Snake snake;
+    private Food food;
+
+    public SnakeGame(GameManager manager, string player) : base(manager, player)
     {
-        private List<(int x, int y)> snakeBody;
-        private Food food;
-        private int boardWidth = 80;
-        private int boardHeight = 20;
+        snake = new Snake(Console.WindowWidth / 2, Console.WindowHeight / 2);
+        food = new Food(Console.WindowWidth / 3, Console.WindowHeight / 3);
+    }
 
-        public SnakeGame(GameManager manager, string player) : base(manager, player)
-        {
-            snakeBody = new List<(int x, int y)> { (10, 10) };
-            food = new Food(boardWidth, boardHeight, snakeBody);
-        }
-
-        public override void Start()
+    public override void Start()
+    {
+        Console.Clear();
+        bool playing = true;
+        while (playing)
         {
             Console.Clear();
-            Console.WriteLine("Starting Snake...");
+            snake.Draw();
+            food.Draw();
 
-            // Implement Snake game logic here
-            for (int i = 0; i < 10; i++)
+            // Handle player input
+            if (Console.KeyAvailable)
             {
-                Console.Clear();
-                DrawBoard();
-                DrawSnake();
-                DrawFood();
-                Thread.Sleep(500);
+                var key = Console.ReadKey(true).Key;
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        snake.Direction = (0, -1);
+                        break;
+                    case ConsoleKey.DownArrow:
+                        snake.Direction = (0, 1);
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        snake.Direction = (-1, 0);
+                        break;
+                    case ConsoleKey.RightArrow:
+                        snake.Direction = (1, 0);
+                        break;
+                }
             }
 
-            // Example score addition
-            gameManager.AddScore("Snake", playerName, new Random().Next(1, 100));
+            snake.Move();
 
-            Console.WriteLine("Snake game finished. Score saved.");
-            Thread.Sleep(1000);
-        }
-
-        private void DrawBoard()
-        {
-            Console.SetCursorPosition(0, 0);
-            for (int i = 0; i < boardWidth; i++)
-                Console.Write('#');
-            for (int i = 1; i < boardHeight - 1; i++)
+            // Check if the snake has eaten the food
+            if (snake.Body.First.Value.X == food.X && snake.Body.First.Value.Y == food.Y)
             {
-                Console.SetCursorPosition(0, i);
-                Console.Write('#');
-                Console.SetCursorPosition(boardWidth - 1, i);
-                Console.Write('#');
+                snake.Grow();
+                food.Relocate(Console.WindowWidth, Console.WindowHeight);
             }
-            Console.SetCursorPosition(0, boardHeight - 1);
-            for (int i = 0; i < boardWidth; i++)
-                Console.Write('#');
-        }
 
-        private void DrawSnake()
-        {
-            foreach (var segment in snakeBody)
+            // Check if the snake has collided with itself
+            if (snake.HasCollidedWithSelf())
             {
-                Console.SetCursorPosition(segment.x, segment.y);
-                Console.Write('O');
+                playing = false;
             }
+
+            System.Threading.Thread.Sleep(100);
         }
 
-        private void DrawFood()
-        {
-            Console.SetCursorPosition(food.Position.x, food.Position.y);
-            Console.Write('*');
-        }
+        Console.WriteLine("Game over. Press any key to return to the game selection menu.");
+        Console.ReadKey();
     }
 }

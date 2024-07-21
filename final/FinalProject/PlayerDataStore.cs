@@ -1,49 +1,78 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Arcade;  // Ensure this namespace is correct for accessing the Player class
 
 public class PlayerDataStore
 {
-    private const string FilePath = "playerdata.csv";
+    private string DataFilePath = "players.csv"; // Ensure this path is correct
 
-    public List<Player> Players { get; set; }
+    public List<Player> Players { get; private set; }
+
+    public PlayerDataStore()
+    {
+        Players = LoadPlayers();
+    }
 
     public void SavePlayers()
     {
-        using (StreamWriter writer = new StreamWriter(FilePath))
+        try
         {
-            foreach (var player in Players)
+            using (StreamWriter writer = new StreamWriter(DataFilePath))
             {
-                writer.WriteLine($"{player.Username},{player.Initials},{player.GetTotalScore()}");
+                foreach (var player in Players)
+                {
+                    string line = $"{player.Username},{player.Initials}";
+                    foreach (var score in player.GameScores)
+                    {
+                        line += $",{score.Key},{score.Value}";
+                    }
+                    writer.WriteLine(line);
+                }
             }
+            Console.WriteLine("Players saved successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while saving players: {ex.Message}");
         }
     }
 
-    public List<Player> LoadPlayers()
+    private List<Player> LoadPlayers()
     {
-        List<Player> loadedPlayers = new List<Player>();
-
-        if (File.Exists(FilePath))
+        List<Player> players = new List<Player>();
+        if (File.Exists(DataFilePath))
         {
-            using (StreamReader reader = new StreamReader(FilePath))
+            try
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
+                using (StreamReader reader = new StreamReader(DataFilePath))
                 {
-                    string[] parts = line.Split(',');
-                    if (parts.Length == 3)
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
                     {
+                        string[] parts = line.Split(',');
                         string username = parts[0];
                         string initials = parts[1];
-                        int score = int.Parse(parts[2]);
 
                         Player player = new Player(username, initials);
-                        player.UpdateScore("Unknown", score);
-                        loadedPlayers.Add(player);
+
+                        // Load scores if available
+                        for (int i = 2; i < parts.Length; i += 2)
+                        {
+                            string gameName = parts[i];
+                            int score = int.Parse(parts[i + 1]);
+                            player.UpdateScore(gameName, score);
+                        }
+
+                        players.Add(player);
                     }
                 }
+                Console.WriteLine("Players loaded successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while loading players: {ex.Message}");
             }
         }
-        return loadedPlayers;
+        return players;
     }
 }

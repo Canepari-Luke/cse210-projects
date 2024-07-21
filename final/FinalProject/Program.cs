@@ -1,14 +1,16 @@
 using System;
 
-namespace Arcade
+public class Program
 {
-    class Program
+    public static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            GameManager manager = new GameManager();
-            ConsoleGUI gui = new ConsoleGUI(manager);
-            gui.Run();
-        }
+        // Initialize the GameManager
+        GameManager gameManager = new GameManager();
+
+        // Initialize the Console GUI and pass the GameManager to it
+        ConsoleGUI consoleGUI = new ConsoleGUI(gameManager);
+
+        // Run the application
+        consoleGUI.Run();
     }
 }
